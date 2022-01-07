@@ -15,25 +15,55 @@ void StreamlineRenderer::trace(Grid& g,const Point3d& seed,vector<StreamPoint>& 
 	
 	float streamline_length = 0;						//Integrate the vector field for a given maximal length:
 	for (int i = 0; streamline_length < max_length; ++i, streamline_length += step_size) {
-		float v[3]; v[2] = 0;								//1. Get vector field at current position, using bilinear interpolation 
+		float v[3]; 
+		v[2] = 0;								//1. Get vector field at current position, using bilinear interpolation 
+
 		bool inside = g.getC1Vector(current.data, v);
 		if (!inside) break;								//2. If current position is outside the grid, stop the tracing
-
-		Point3d vec(v);
-		float length = vec.norm();
+		Point3d veca(v);
+		float length = veca.norm();
 
 		StreamPoint p;									//3. Create a new streamline-point. Besides position, save the	
 		p.point = current;							//normalized vector length, and also the distance along the streamline
 		p.magnitude = (length - vector_min) / (vector_max - vector_min);
 		p.position = streamline_length;
-
 		streamline.push_back(p);						//4. Append point to streamline
 
-		if (length < 1.0e-5) break;						//5. If we reach an area of near-zero vector magnitude, stop tracing
+		if (length < 1.0e-5) 
+			break;						//5. If we reach an area of near-zero vector magnitude, stop tracing
+		veca /= length;									//6. Generate a new point by  RK4 integration. 	
+		
+		Point3d next = current + veca * step_size;
+		inside = g.getC1Vector(next.data, v);
+		if (!inside)
+			break;								//If current position is outside the grid, stop the tracing
+		Point3d vecb(v);
+		length = vecb.norm();
+		if (length < 1.0e-5)
+			break;						//If we reach an area of near-zero vector magnitude, stop tracing
+		vecb /= length;
+		
+		next += vecb * step_size;
+		inside = g.getC1Vector(next.data, v);
+		if (!inside)
+			break;								//If current position is outside the grid, stop the tracing
+		Point3d vecc(v);
+		length = vecc.norm();
+		if (length < 1.0e-5)
+			break;						//If we reach an area of near-zero vector magnitude, stop tracing
+		vecc /= length;
 
-		vec /= length;									//6. Generate a new point by simple Euler integration. 
-														//   Use here the normalized vector, for an even point distibution
-		current += vec * step_size;						//   along the streamline
+		next += vecc * step_size;
+		inside = g.getC1Vector(next.data, v);
+		if (!inside)
+			break;								//If current position is outside the grid, stop the tracing
+		Point3d vecd(v);
+		length = vecd.norm();
+		if (length < 1.0e-5)
+			break;						//If we reach an area of near-zero vector magnitude, stop tracing
+		vecd /= length;
+
+		current += (veca + vecb * 2.0f + vecc * 2.0f + vecd) * (2.0f * step_size / 6.0f);	
 	}
 	
 	for(int i=0;i<streamline.size();++i)				//After the streamline is ready, normalize the distance along the streamline
