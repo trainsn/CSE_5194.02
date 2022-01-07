@@ -4,9 +4,6 @@
 #include <GL/glut.h>									//GLUT library
 
 
-
-
-
 void StreamlineRenderer::trace(Grid& g,const Point3d& seed,vector<StreamPoint>& streamline)				
 {														//Trace a single streamline from 'seed' downstream
 
@@ -17,27 +14,26 @@ void StreamlineRenderer::trace(Grid& g,const Point3d& seed,vector<StreamPoint>& 
 	Point3d current = seed;
 	
 	float streamline_length = 0;						//Integrate the vector field for a given maximal length:
-	for(int i=0;streamline_length<max_length;++i,streamline_length+=step_size)
-	{	
-		float v[3]; v[2]=0;								//1. Get vector field at current position, using bilinear interpolation 
-		bool inside = g.getC1Vector(current.data,v);		
+	for (int i = 0; streamline_length < max_length; ++i, streamline_length += step_size) {
+		float v[3]; v[2] = 0;								//1. Get vector field at current position, using bilinear interpolation 
+		bool inside = g.getC1Vector(current.data, v);
 		if (!inside) break;								//2. If current position is outside the grid, stop the tracing
 
 		Point3d vec(v);
-		float length  = vec.norm();
-		
+		float length = vec.norm();
+
 		StreamPoint p;									//3. Create a new streamline-point. Besides position, save the	
-		p.point     = current;							//normalized vector length, and also the distance along the streamline
-		p.magnitude = (length-vector_min)/(vector_max-vector_min);
-		p.position  = streamline_length;
-		
+		p.point = current;							//normalized vector length, and also the distance along the streamline
+		p.magnitude = (length - vector_min) / (vector_max - vector_min);
+		p.position = streamline_length;
+
 		streamline.push_back(p);						//4. Append point to streamline
 
-		if (length<1.0e-5) break;						//5. If we reach an area of near-zero vector magnitude, stop tracing
-				
+		if (length < 1.0e-5) break;						//5. If we reach an area of near-zero vector magnitude, stop tracing
+
 		vec /= length;									//6. Generate a new point by simple Euler integration. 
 														//   Use here the normalized vector, for an even point distibution
-		current += vec*step_size;						//   along the streamline
+		current += vec * step_size;						//   along the streamline
 	}
 	
 	for(int i=0;i<streamline.size();++i)				//After the streamline is ready, normalize the distance along the streamline
@@ -59,7 +55,7 @@ void StreamlineRenderer::draw(Grid& g)					//Draw streamlines for grid 'g' depen
 		vector<StreamPoint> streamline;
 		const Point3d& seed = seeds[i];
 
-		trace(g,seed,streamline);						//2.1. Trace the streamline. Collect result in 'streamline'
+		trace(g, seed, streamline);						//2.1. Trace the streamline. Collect result in 'streamline'
 		
 		switch(draw_style)								//2.2. Draw traced streamline depending on drawing style
 		{
@@ -155,9 +151,9 @@ void StreamlineRenderer::drawMagnitudeLines(const vector<StreamPoint>& streamlin
 	{
 		const StreamPoint& p = streamline[i];		
 		float r,g,b;									
-		mapToColor(p.magnitude,r,g,b);				
+		mapToColor(p.magnitude, r, g, b);
 		glColor3f(r,g,b);		
-		glVertex2f(p.point.x,p.point.y);
+		glVertex2f(p.point.x, p.point.y);
 	}
 	glEnd();	
 }

@@ -21,7 +21,7 @@ enum DRAW_STYLE											//Different streamline drawing styles
 	DRAW_SHADED_LINES									// -black lines with decreasing transparency
 };	
 
-				StreamlineRenderer(): draw_style(DRAW_LINES),max_length(1),step_size(0.1),thickness(1) {}
+				StreamlineRenderer(): draw_style(DRAW_MAGNITUDE_LINES),max_length(1),step_size(0.1),thickness(1) {}
 
 void			setSeeds(const vector<Point3d>& s)
 				{ seeds = s; }
