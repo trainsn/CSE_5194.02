@@ -27,6 +27,9 @@
     <ClInclude Include="AnalyFunc.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="def.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Solution.cpp">
