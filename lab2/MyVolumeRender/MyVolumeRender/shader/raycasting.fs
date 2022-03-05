@@ -8,9 +8,25 @@ in vec4 ExitPointCoord;
 uniform sampler2D ExitPoints;
 uniform sampler3D VolumeTex;
 uniform sampler1D TransferFunc;  
-uniform float     StepSize;
-uniform vec2      ScreenSize;
+uniform float StepSize;
+uniform vec2 ScreenSize;
+uniform int light_use;
+uniform vec3 light_direction;
+uniform float light_power;
 layout (location = 0) out vec4 FragColor;
+
+vec3 PhongShading(vec3 samplePos, vec3 diffuseColor)
+{
+	vec3 shadedValue=vec3(0.0, 0.0, 0.0);
+
+	vec3 N = texture3D(VolumeTex, samplePos).yzw;
+	N = -normalize(N);
+	vec3 L = -normalize(light_direction);
+	float NdotL = max(dot(N, L), 0.0);
+
+	shadedValue = light_power * NdotL * diffuseColor;
+	return shadedValue;
+}
 
 void main()
 {
@@ -46,6 +62,9 @@ void main()
         // 查找传输函数中映射后的值
         // 依赖性纹理读取  
         vec4 colorSample = texture(TransferFunc, intensity);
+		if (light_use){
+			colorSample.rgb = PhongShading(voxelCoord, colorSample.rgb);
+		}	
 		colorAcum = colorAcum + colorSample * vec4(colorSample.aaa, 1.0) * (1.0 - colorAcum.a);
        
 		if (colorAcum.a > 0.99){

@@ -384,13 +384,13 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 					int idx = k * h * w + j * w + i;
 					pVXYZ[idx * 4] = data[idx];
 					if (k == 0) {
-						pVXYZ[idx * 4 + 3] = data[idx + h * w] - data[idx];
+						pVXYZ[idx * 4 + 1] = data[idx + h * w] - data[idx];
 					}
 					else if (k == d - 1) {
-						pVXYZ[idx * 4 + 3] = data[idx] - data[idx - h * w];
+						pVXYZ[idx * 4 + 1] = data[idx] - data[idx - h * w];
 					}
 					else {
-						pVXYZ[idx * 4 + 3] = 0.5 * (data[idx + h * w] - data[idx - h * w]);
+						pVXYZ[idx * 4 + 1] = 0.5 * (data[idx + h * w] - data[idx - h * w]);
 					}
 
 					if (j == 0) {
@@ -404,13 +404,13 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 					}
 
 					if (i == 0) {
-						pVXYZ[idx * 4 + 1] = data[idx + 1] - data[idx];
+						pVXYZ[idx * 4 + 3] = data[idx + 1] - data[idx];
 					}
 					else if (i == w - 1) {
-						pVXYZ[idx * 4 + 1] = data[idx] - data[idx - 1];
+						pVXYZ[idx * 4 + 3] = data[idx] - data[idx - 1];
 					}
 					else {
-						pVXYZ[idx * 4 + 1] = 0.5 * (data[idx + 1] - data[idx - 1]);
+						pVXYZ[idx * 4 + 3] = 0.5 * (data[idx + 1] - data[idx - 1]);
 					}
 				}
 			}
@@ -531,7 +531,6 @@ void initShader() {
 	g_rcFragHandle = initShaderObj("shader/raycasting.fs", GL_FRAGMENT_SHADER);
 	// create the shader program , use it in an appropriate time
 	g_programHandle = createShaderPgm();
-	// �������ɫ�����������������(��ѡ)
 }
 
 // link the shader objects using the shader program
@@ -661,8 +660,43 @@ void render(GLenum cullFace) {
 	else {
 		cerr << "can't get the MVP" << endl;
 	}
+
+	if (cullFace == GL_BACK) {
+		GLint lightuseLoc = glGetUniformLocation(g_programHandle, "light_use");
+		if (lightuseLoc >= 0) {
+			glUniform1i(lightuseLoc, 1);
+		}
+		else {
+			cout << "light_use "
+				<< "is not bind to the uniform"
+				<< endl;
+		}
+
+		GLint lightdirLoc = glGetUniformLocation(g_programHandle, "light_direction");
+		if (lightdirLoc >= 0) {
+			glUniform3f(lightdirLoc, direction.x, direction.y, direction.z);
+		}
+		else {
+			cout << "light_direction "
+				<< "is not bind to the uniform"
+				<< endl;
+		}
+
+		float light_power = 4.0f;
+		GLint lightpowerLoc = glGetUniformLocation(g_programHandle, "light_power");
+		if (lightpowerLoc >= 0) {
+			glUniform1f(lightpowerLoc, light_power);
+		}
+		else {
+			cout << "light_direction "
+				<< "is not bind to the uniform"
+				<< endl;
+		}
+	}
+
 	drawBox(cullFace);
 }
+
 void rotateDisplay() {
 	idx++;
 	g_angle = 20.0f * idx;
