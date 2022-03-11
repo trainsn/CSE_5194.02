@@ -21,9 +21,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\backface.fs">
@@ -41,9 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image_write.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="glad.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

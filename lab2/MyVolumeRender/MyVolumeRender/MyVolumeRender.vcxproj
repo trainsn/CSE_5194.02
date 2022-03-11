@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,7 +28,6 @@
     <None Include="shader\raycasting.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="glad.h" />
     <ClInclude Include="stb_image_write.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

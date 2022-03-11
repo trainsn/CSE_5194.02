@@ -36,9 +36,12 @@ GLuint g_rcVertHandle;
 GLuint g_rcFragHandle;
 GLuint g_bfVertHandle;
 GLuint g_bfFragHandle;
-float g_stepSize = 0.001f;
+float g_stepSize = 1.0f / 256.0f;
+float theta;
+float phi;
+float thetas[3] = { 0.0f, 90.0f, 90.0f };
+float phis[3] = { 180.0f, 0.0f, 90.0f };
 
-void keyboard(unsigned char key, int x, int y);
 void display(void);
 void initVBO();
 void initShader();
@@ -52,7 +55,7 @@ void init() {
 	initShader();
 	g_tffTexObj = initTFF1DTex("../TF1D/mantle-1.TF1D");
 	g_bfTexObj = initFace2DTex(g_winWidth, g_winHeight);
-	g_volTexObj = initVol3DTex("../res/mantle.raw", 256, 256, 256);
+	g_volTexObj = initVol3DTex("../input/mantle.raw", 256, 256, 256);
 	initFrameBuffer(g_bfTexObj, g_winWidth, g_winHeight);
 }
 // init the vertex buffer object
@@ -72,7 +75,7 @@ void initVBO() {
 	// draw it contra-clockwise
 	// front: 1 5 7 3
 	// back: 0 2 6 4
-	// left��0 1 3 2
+	// left 0 1 3 2
 	// right:7 5 4 6    
 	// up: 2 3 7 6
 	// down: 1 0 4 5
@@ -372,7 +375,7 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 			data_min = data[i];
 		if (data[i] > data_max)
 			data_max = data[i];
-		data[i] /= 3600.0f;
+		data[i] /= 5000.0f;
 	}
 	cout << "data_min: " << data_min << " data_max: " << data_max << endl;
 
@@ -632,8 +635,6 @@ void render(GLenum cullFace) {
 	glm::mat4 pMatrix = glm::perspective(fov_r, (float)g_winWidth / (float)g_winHeight, near, far);
 
 	// transform
-	float theta = M_PI / 2;
-	float phi = M_PI / 4 * 3;
 	float dist = 2.0f;
 	glm::vec3 direction = glm::vec3(sin(theta) * cos(phi) * dist, sin(theta) * sin(phi) * dist, cos(theta) * dist);
 	glm::vec3 up = glm::vec3(sin(theta - M_PI / 2) * cos(phi), sin(theta - M_PI / 2) * sin(phi), cos(theta - M_PI / 2));
@@ -643,7 +644,6 @@ void render(GLenum cullFace) {
 	glm::mat4 view = glm::lookAt(eye, center, up);
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model *= glm::rotate(g_angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// to make the "head256.raw" i.e. the volume data stand up.
 	model *= glm::scale(glm::vec3(1.8f, 1.8f, 1.8f));
@@ -664,7 +664,7 @@ void render(GLenum cullFace) {
 	if (cullFace == GL_BACK) {
 		GLint lightuseLoc = glGetUniformLocation(g_programHandle, "light_use");
 		if (lightuseLoc >= 0) {
-			glUniform1i(lightuseLoc, 1);
+			glUniform1i(lightuseLoc, 0);
 		}
 		else {
 			cout << "light_use "
@@ -699,9 +699,10 @@ void render(GLenum cullFace) {
 
 void rotateDisplay() {
 	idx++;
-	g_angle = 20.0f * idx;
-	cout << g_angle << endl;
-	if (g_angle >= 360.0f) {
+	theta = thetas[idx] * M_PI / 180.0f;
+	phi = phis[idx] * M_PI / 180.0f;
+	cout << phi << " " << theta << endl;
+	if (idx > 2) {
 		exit(0);
 	}
 	glutPostRedisplay();
