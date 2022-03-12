@@ -362,7 +362,6 @@ CTestTestfile.cmake
 _deps
 
 *.docx
-*.txt
 *.raw
 *.nc
 *.zip
