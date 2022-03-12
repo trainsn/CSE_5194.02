@@ -36,7 +36,7 @@ GLuint g_rcVertHandle;
 GLuint g_rcFragHandle;
 GLuint g_bfVertHandle;
 GLuint g_bfFragHandle;
-float g_stepSize = 1.0f / 256.0f;
+float g_stepSize = 1.0f / 256;
 float theta;
 float phi;
 float thetas[3] = { 0.0f, 90.0f, 90.0f };
@@ -53,7 +53,7 @@ void render(GLenum cullFace);
 void init() {
 	initVBO();
 	initShader();
-	g_tffTexObj = initTFF1DTex("../TF1D/mantle-1.TF1D");
+	g_tffTexObj = initTFF1DTex("../TF1D/mantle-256.TF1D");
 	g_bfTexObj = initFace2DTex(g_winWidth, g_winHeight);
 	g_volTexObj = initVol3DTex("../input/mantle.raw", 256, 256, 256);
 	initFrameBuffer(g_bfTexObj, g_winWidth, g_winHeight);
@@ -378,6 +378,16 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 		data[i] /= 5000.0f;
 	}
 	cout << "data_min: " << data_min << " data_max: " << data_max << endl;
+	//float data_min = 0.0f;;
+	//float data_max = 0.0f;
+	//for (int i = 0; i < size; i++) {
+	//	if (data[i] < data_min)
+	//		data_min = data[i];
+	//	if (data[i] > data_max)
+	//		data_max = data[i];
+	//	data[i] = (data[i] + 1.0f) / 2.0f;
+	//}
+	//cout << "data_min: " << data_min << " data_max: " << data_max << endl;
 
 #pragma omp parallel for
 	{
@@ -387,13 +397,13 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 					int idx = k * h * w + j * w + i;
 					pVXYZ[idx * 4] = data[idx];
 					if (k == 0) {
-						pVXYZ[idx * 4 + 1] = data[idx + h * w] - data[idx];
+						pVXYZ[idx * 4 + 3] = data[idx + h * w] - data[idx];
 					}
 					else if (k == d - 1) {
-						pVXYZ[idx * 4 + 1] = data[idx] - data[idx - h * w];
+						pVXYZ[idx * 4 + 3] = data[idx] - data[idx - h * w];
 					}
 					else {
-						pVXYZ[idx * 4 + 1] = 0.5 * (data[idx + h * w] - data[idx - h * w]);
+						pVXYZ[idx * 4 + 3] = 0.5 * (data[idx + h * w] - data[idx - h * w]);
 					}
 
 					if (j == 0) {
@@ -407,14 +417,17 @@ GLuint initVol3DTex(const char* filename, GLuint w, GLuint h, GLuint d) {
 					}
 
 					if (i == 0) {
-						pVXYZ[idx * 4 + 3] = data[idx + 1] - data[idx];
+						pVXYZ[idx * 4 + 1] = data[idx + 1] - data[idx];
 					}
 					else if (i == w - 1) {
-						pVXYZ[idx * 4 + 3] = data[idx] - data[idx - 1];
+						pVXYZ[idx * 4 + 1] = data[idx] - data[idx - 1];
 					}
 					else {
-						pVXYZ[idx * 4 + 3] = 0.5 * (data[idx + 1] - data[idx - 1]);
+						pVXYZ[idx * 4 + 1] = 0.5 * (data[idx + 1] - data[idx - 1]);
 					}
+					pVXYZ[idx * 4 + 1] *= 2e2;
+					pVXYZ[idx * 4 + 2] *= 2e2;
+					pVXYZ[idx * 4 + 3] *= 2e2;
 				}
 			}
 		}
@@ -664,7 +677,7 @@ void render(GLenum cullFace) {
 	if (cullFace == GL_BACK) {
 		GLint lightuseLoc = glGetUniformLocation(g_programHandle, "light_use");
 		if (lightuseLoc >= 0) {
-			glUniform1i(lightuseLoc, 0);
+			glUniform1i(lightuseLoc, 1);
 		}
 		else {
 			cout << "light_use "

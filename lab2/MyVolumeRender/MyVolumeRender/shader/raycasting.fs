@@ -15,9 +15,8 @@ uniform vec3 light_direction;
 uniform float light_power;
 layout (location = 0) out vec4 FragColor;
 
-vec3 PhongShading(vec3 samplePos, vec3 diffuseColor)
-{
-	vec3 shadedValue=vec3(0.0, 0.0, 0.0);
+vec3 PhongShading(vec3 samplePos, vec3 diffuseColor){
+	vec3 shadedValue = vec3(0.0, 0.0, 0.0);
 
 	vec3 N = texture3D(VolumeTex, samplePos).yzw;
 	N = -normalize(N);
