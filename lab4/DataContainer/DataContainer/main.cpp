@@ -21,6 +21,8 @@ int main(void) {
 	StreamlineRenderer renderer;
 	renderer.SetSeeds("../input/seeds.txt");
 
-	renderer.Trace(grid, sol, 1);
+	//renderer.Trace(grid, sol, 1);
 	//renderer.Trace(grid, sol, 4);
+	renderer.CalVorticity(grid, sol);
+
 }

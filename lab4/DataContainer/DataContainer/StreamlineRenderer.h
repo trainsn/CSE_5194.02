@@ -16,4 +16,5 @@ public:
 	void Trace(Grid& grid, Solution& sol, int order);
 	void Euler(Grid& grid, Solution& sol, const glm::vec3& seed, vector<glm::vec3>& streamline);
 	void RK4(Grid& grid, Solution& sol, const glm::vec3& seed, vector<glm::vec3>& streamline);
+	void CalVorticity(Grid& grid, Solution& sol);
 };

@@ -140,4 +140,63 @@ void StreamlineRenderer::RK4(Grid & grid, Solution & sol, const glm::vec3 & seed
 	}
 }
 
+void StreamlineRenderer::CalVorticity(Grid & grid, Solution & sol) {
+	int dim_x = grid.GetDimX();
+	int dim_y = grid.GetDimX();
+	int dim_z = grid.GetDimX();
+	vector<float> vorticity;
+	vorticity.resize(dim_x * dim_y * dim_z);
+#pragma omp parallel for
+	{
+		for (int k = 0; k < dim_x; k++) {
+			for (int j = 0; j < dim_y; j++) {
+				for (int i = 0; i < dim_z; i++) {
+					int idx = k * dim_y * dim_z + j * dim_z + i;
+					glm::vec3 grad_x, grad_y, grad_z;
+					if (k == 0) {
+						grad_x = sol.GetValue(idx + dim_y * dim_z) - sol.GetValue(idx);
+					}
+					else if (k == dim_x - 1) {
+						grad_x = sol.GetValue(idx) - sol.GetValue(idx - dim_y * dim_z);
+					}
+					else {
+						grad_x = 0.5f * (sol.GetValue(idx + dim_y * dim_z) - sol.GetValue(idx - dim_y * dim_z));
+					}
+
+					if (j == 0) {
+						grad_y = sol.GetValue(idx + dim_z) - sol.GetValue(idx);
+					}
+					else if (j == dim_y - 1) {
+						grad_y = sol.GetValue(idx) - sol.GetValue(idx - dim_z);
+					}
+					else {
+						grad_y = 0.5f * (sol.GetValue(idx + dim_z) - sol.GetValue(idx - dim_z));
+					}
+
+					if (i == 0) {
+						grad_z = sol.GetValue(idx + 1) - sol.GetValue(idx);
+					}
+					else if (i == dim_z - 1) {
+						grad_z = sol.GetValue(idx) - sol.GetValue(idx - 1);
+					}
+					else {
+						grad_z = 0.5f * (sol.GetValue(idx + 1) - sol.GetValue(idx - 1));
+					}
+
+					glm::vec3 curl;
+					curl.x = grad_y.z - grad_z.y;
+					curl.y = grad_z.x - grad_x.z;
+					curl.z = grad_x.y - grad_y.x;
+					vorticity[idx] = glm::length(curl);
+				}
+			}
+		}
+	}
+	char output_path[1024];
+	sprintf(output_path, "../output/tornado_vorticity.raw");
+	fstream writeFile;
+	writeFile.open(output_path, ios::binary | ios::out);
+	writeFile.write((const char *)&vorticity[0], sizeof(float) * vorticity.size());
+}
+
 
