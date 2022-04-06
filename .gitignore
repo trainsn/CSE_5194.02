@@ -366,3 +366,4 @@ _deps
 *.nc
 *.zip
 *.png
+*.vec
