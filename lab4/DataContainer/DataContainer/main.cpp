@@ -22,4 +22,5 @@ int main(void) {
 	renderer.SetSeeds("../input/seeds.txt");
 
 	renderer.Trace(grid, sol, 1);
+	//renderer.Trace(grid, sol, 4);
 }
