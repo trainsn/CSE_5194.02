@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include "Grid.h"
-#include "AnalyFunc.h"
 #include "Solution.h"
 #include "StreamlineRenderer.h"
 
@@ -21,4 +20,6 @@ int main(void) {
 
 	StreamlineRenderer renderer;
 	renderer.SetSeeds("../input/seeds.txt");
+
+	renderer.Trace(grid, sol, 1);
 }

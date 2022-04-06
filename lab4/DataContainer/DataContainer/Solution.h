@@ -2,7 +2,6 @@
 
 #include <GL/glm/glm.hpp>
 #include<vector>
-#include "AnalyFunc.h"
 using namespace std;
 
 class Solution {

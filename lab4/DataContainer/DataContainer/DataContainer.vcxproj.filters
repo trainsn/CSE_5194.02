@@ -24,10 +24,10 @@
     <ClInclude Include="Solution.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AnalyFunc.h">
+    <ClInclude Include="StreamlineRenderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="StreamlineRenderer.h">
+    <ClInclude Include="cnpy.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,13 +41,13 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="AnalyFunc.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="StreamlineRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cnpy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

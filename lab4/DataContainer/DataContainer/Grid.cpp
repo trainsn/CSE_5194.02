@@ -39,4 +39,17 @@ void Grid::GetCornerPoints(int cell_id, vector<int>& corner_positions){
 	corner_positions.push_back((idx_z + 1) * dim_y * dim_x + (idx_y + 1) * dim_x + (idx_x + 1));
 }
 
+bool Grid::IsInside(float x, float y, float z){
+	if (x < 0 || x > 1) {
+		return false;
+	}
+	if (y < 0 || y > 1) {
+		return false;
+	}
+	if (z < 0 || z > 1) {
+		return false;
+	}
+	return true;
+}
+
 
