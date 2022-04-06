@@ -4,6 +4,7 @@
 #include "Grid.h"
 #include "AnalyFunc.h"
 #include "Solution.h"
+#include "StreamlineRenderer.h"
 
 using namespace std;
 
@@ -18,4 +19,6 @@ int main(void) {
 	Solution sol;
 	sol.InputDataToArray(dim_x, dim_y, dim_z, "../input/tornadoPC_96.vec");
 
+	StreamlineRenderer renderer;
+	renderer.SetSeeds("../input/seeds.txt");
 }

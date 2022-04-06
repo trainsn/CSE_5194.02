@@ -27,6 +27,9 @@
     <ClInclude Include="AnalyFunc.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="StreamlineRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Solution.cpp">
@@ -42,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Field.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamlineRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
